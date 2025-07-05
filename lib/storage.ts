@@ -4,8 +4,11 @@ import { DEFAULT_CATEGORIES, getCategoryColor } from './categories';
 const TRANSACTIONS_KEY = 'expense-tracker-transactions';
 const BUDGETS_KEY = 'expense-tracker-budgets';
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
 export const getTransactions = (): Transaction[] => {
-  if (typeof window === 'undefined') return [];
+  if (!isBrowser) return [];
   try {
     const stored = localStorage.getItem(TRANSACTIONS_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -16,7 +19,7 @@ export const getTransactions = (): Transaction[] => {
 };
 
 export const saveTransactions = (transactions: Transaction[]): void => {
-  if (typeof window === 'undefined') return;
+  if (!isBrowser) return;
   try {
     localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
   } catch (error) {
@@ -25,7 +28,7 @@ export const saveTransactions = (transactions: Transaction[]): void => {
 };
 
 export const getBudgets = (): Budget[] => {
-  if (typeof window === 'undefined') return [];
+  if (!isBrowser) return [];
   try {
     const stored = localStorage.getItem(BUDGETS_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -36,7 +39,7 @@ export const getBudgets = (): Budget[] => {
 };
 
 export const saveBudgets = (budgets: Budget[]): void => {
-  if (typeof window === 'undefined') return;
+  if (!isBrowser) return;
   try {
     localStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
   } catch (error) {

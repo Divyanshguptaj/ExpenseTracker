@@ -14,14 +14,16 @@ import { BudgetForm } from '@/components/budget/budget-form';
 import { BudgetOverview } from '@/components/budget/budget-overview';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Transaction, Budget, DashboardSummary } from '@/types';
-import { getDashboardSummary } from '@/lib/storage';
+import { getDashboardSummary, getTransactions } from '@/lib/storage';
 import { Plus, BarChart3, DollarSign, Target } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   
   // Dialog states
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
@@ -30,16 +32,36 @@ export default function Home() {
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
   useEffect(() => {
-    loadDashboardData();
+    setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (mounted) {
+      loadDashboardData();
+    }
+  }, [mounted]);
+
   const loadDashboardData = () => {
+    if (!mounted) return;
+    
     setIsLoading(true);
     try {
       const dashboardData = getDashboardSummary();
+      const transactions = getTransactions();
       setSummary(dashboardData);
+      setAllTransactions(transactions);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      // Set default empty state
+      setSummary({
+        totalExpenses: 0,
+        totalIncome: 0,
+        balance: 0,
+        monthlyExpenses: [],
+        categoryBreakdown: [],
+        recentTransactions: [],
+      });
+      setAllTransactions([]);
     } finally {
       setIsLoading(false);
     }
@@ -66,6 +88,11 @@ export default function Home() {
     setEditingBudget(budget);
     setIsBudgetDialogOpen(true);
   };
+
+  // Don't render anything until mounted to prevent hydration issues
+  if (!mounted) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -129,7 +156,7 @@ export default function Home() {
               </Button>
             </div>
             <TransactionList
-              transactions={summary?.recentTransactions || []}
+              transactions={allTransactions}
               onEdit={handleEditTransaction}
               onUpdate={loadDashboardData}
             />

@@ -6,9 +6,9 @@ const nextConfig = {
   images: { 
     unoptimized: true 
   },
-  trailingSlash: true,
-  experimental: {
-    esmExternals: false,
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 };
 
