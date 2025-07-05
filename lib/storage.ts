@@ -6,24 +6,42 @@ const BUDGETS_KEY = 'expense-tracker-budgets';
 
 export const getTransactions = (): Transaction[] => {
   if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(TRANSACTIONS_KEY);
-  return stored ? JSON.parse(stored) : [];
+  try {
+    const stored = localStorage.getItem(TRANSACTIONS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error loading transactions:', error);
+    return [];
+  }
 };
 
 export const saveTransactions = (transactions: Transaction[]): void => {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+  try {
+    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+  } catch (error) {
+    console.error('Error saving transactions:', error);
+  }
 };
 
 export const getBudgets = (): Budget[] => {
   if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(BUDGETS_KEY);
-  return stored ? JSON.parse(stored) : [];
+  try {
+    const stored = localStorage.getItem(BUDGETS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error loading budgets:', error);
+    return [];
+  }
 };
 
 export const saveBudgets = (budgets: Budget[]): void => {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+  try {
+    localStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+  } catch (error) {
+    console.error('Error saving budgets:', error);
+  }
 };
 
 export const addTransaction = (transaction: Omit<Transaction, 'id'>): Transaction => {
@@ -138,7 +156,7 @@ export const getDashboardSummary = (): DashboardSummary => {
   // Get recent transactions
   const recentTransactions = transactions
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5);
+    .slice(0, 10);
   
   return {
     totalExpenses,

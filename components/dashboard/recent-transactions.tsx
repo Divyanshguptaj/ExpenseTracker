@@ -34,7 +34,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
           {transactions.length === 0 ? (
             <p className="text-sm text-muted-foreground">No transactions yet</p>
           ) : (
-            transactions.map((transaction) => (
+            transactions.slice(0, 5).map((transaction) => (
               <div key={transaction.id} className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
                   <Icon
