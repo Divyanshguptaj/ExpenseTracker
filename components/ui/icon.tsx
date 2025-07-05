@@ -9,7 +9,7 @@ interface IconProps {
 }
 
 export function Icon({ name, className }: IconProps) {
-  const IconComponent = Icons[name as keyof typeof Icons] as LucideIcon;
+  const IconComponent = Icons[name as keyof typeof Icons] as React.ElementType;
   
   if (!IconComponent) {
     return <Icons.HelpCircle className={className} />;
